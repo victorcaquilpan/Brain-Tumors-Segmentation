@@ -17,6 +17,7 @@ pylint!=2.13  # https://github.com/PyCQA/pylint/issues/5969
 torchvision
 psutil
 torchsummary
+timm
 pandas
 einops
 matplotlib!=3.5.0
