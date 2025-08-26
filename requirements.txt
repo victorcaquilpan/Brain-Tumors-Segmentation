@@ -28,4 +28,3 @@ openpyxl
 xlrd==1.2.0
 SimpleITK
 hydra-core
-nibabel
