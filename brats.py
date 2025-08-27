@@ -98,6 +98,7 @@ def get_datasets(dataset_folder, mode, target_size = (128, 128, 128), version= "
     print("dataset_folder", dataset_folder)
     print("version",version)
     dataset_folder = get_brats_folder(dataset_folder, mode, version= version)
+    print("dataset_folder_processed", dataset_folder) 
     assert os.path.exists(dataset_folder), "Dataset Folder Does Not Exist1"
     patients_ids = [x for x in listdir(dataset_folder)]
     return BraTS(dataset_folder, patients_ids, mode, target_size=target_size, version=version)
