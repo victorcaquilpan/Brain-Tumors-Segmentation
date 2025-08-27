@@ -1,4 +1,4 @@
-irl_pc: /data/data-brain/train/
+irl_pc: /data/data-brain/
 laptop_pc: "./"
 colab: "./"
 sines_pc: ./datasets
