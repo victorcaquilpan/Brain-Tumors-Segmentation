@@ -630,8 +630,11 @@ def main(cfg: DictConfig):
         dataset_dir = cfg.dataset.laptop_pc
 
 
-    train_dataset = get_datasets(dataset_dir, "train", target_size=(128, 128, 128))
-    train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(128, 128, 128))
+    #train_dataset = get_datasets(dataset_dir, "train", target_size=(128, 128, 128))
+    #train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(128, 128, 128))
+
+    train_dataset = get_datasets(dataset_dir, "train", target_size=(240 ,240 , 155))
+    train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(240 , 240 , 155))
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, 
                                             shuffle=True, num_workers=num_workers, 
