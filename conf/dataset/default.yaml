@@ -1,9 +1,3 @@
-irl_pc: /data/data-brain/
-laptop_pc: "./"
-colab: "./"
-sines_pc: ./datasets
 dataset_folder: # specify your dataset path here if any of the above does not relate to you
 version:  brats2023
 type: brats # brats 
-patient_id: "/data/data-brain/train/brats2023"
-save_dir: "data/results/"

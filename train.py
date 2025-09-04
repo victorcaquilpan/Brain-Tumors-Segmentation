@@ -20,7 +20,7 @@ import gc
 import nibabel as nib
 import tqdm as tqdm
 from utils.meter import AverageMeter
-from utils.general import save_checkpoint, load_pretrained_model, resume_training
+from utils.general import save_checkpoint
 from brats import get_datasets
 
 from monai.data import  decollate_batch
@@ -43,34 +43,13 @@ from networks.models.UNet.model import UNet3D
 from networks.models.UX_Net.network_backbone import UXNET
 from networks.models.nnformer.nnFormer_tumor import nnFormer
 from networks.models.E_CATBraTS.model import E_CATBraTS
-from networks.models.unetr_pp.network_architecture.tumor.unetr_pp_tumor import UNETR_PP
-
-try:
-    from thesis.models.SegUXNet.model import SegUXNet
-except ModuleNotFoundError:
-    print('model not available, please train with other models')
-    
+from networks.models.unetr_pp.network_architecture.tumor.unetr_pp_tumor import UNETR_PP    
 from functools import partial
 from utils.augment import DataAugmenter
 from utils.schedulers import SegResNetScheduler, PolyDecayScheduler
-
-# Configure logger
-import logging
 import hydra
 from omegaconf import DictConfig
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-os.makedirs("logger", exist_ok=True)
-file_handler = logging.FileHandler(filename= "logger/train_logger.log")
-stream_handler = logging.StreamHandler()
-formatter = logging.Formatter(fmt= "%(asctime)s: %(message)s", datefmt= '%Y-%m-%d %H:%M:%S')
-file_handler.setFormatter(formatter)
-stream_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
 
 class CIdentity(nn.Module):
     """identify mapping a list of values """
@@ -435,7 +414,7 @@ def run(cfg, model,
             train_losses,
             train_epochs)
 
-@hydra.main(config_name='configs', config_path= 'conf', version_base=None)
+@hydra.main(config_name='configs', config_path= 'conf', version_base=None,)
 def main(cfg: DictConfig):
 
     # Initialize random
@@ -534,16 +513,6 @@ def main(cfg: DictConfig):
                          conv_op=nn.Conv3d,
                          patch_size= [4,4,4], 
                          window_size=[4,4,8,4]).to(device)
-    # SegConvNet
-    elif cfg.model.architecture == "seg_uxnet":
-        model = SegUXNet(spatial_dims=3, 
-                         init_filters=32, 
-                         in_channels= in_channels,
-                         out_channels=num_classes, 
-                         dropout_prob=0.2, 
-                         blocks_down=(1, 2, 2, 4), 
-                         blocks_up=(1, 1, 1), 
-                         enable_gc=True).to(device)
     # E_CATBraTS
     elif cfg.model.architecture == "e_catbrats":
         model = E_CATBraTS(in_channels=in_channels, 
@@ -620,21 +589,9 @@ def main(cfg: DictConfig):
     num_workers = cfg.training.num_workers
     
     # Set path to dataset (Customize to your case in configs)
-    if cfg.training.colab:
-        dataset_dir = cfg.dataset.colab
-    elif cfg.training.irl:
-        dataset_dir = cfg.dataset.irl_pc
-    elif cfg.training.sines:
-        dataset_dir = cfg.dataset.sines_pc
-    elif cfg.training.my_pc:
-        dataset_dir = cfg.dataset.laptop_pc
-
-
-    #train_dataset = get_datasets(dataset_dir, "train", target_size=(128, 128, 128))
-    #train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(128, 128, 128))
-
-    train_dataset = get_datasets(dataset_dir, "train", target_size=(240 ,240 , 155))
-    train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(240 , 240 , 155))
+    dataset_dir = cfg.dataset.dataset_folder
+    train_dataset = get_datasets(dataset_dir, "train", target_size=(128, 128, 128))
+    train_val_dataset = get_datasets(dataset_dir, "train_val", target_size=(128, 128, 128))
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, 
                                             shuffle=True, num_workers=num_workers, 

@@ -13,7 +13,7 @@ resume: False
 exp_name: segres_net_runs
 seed: 123
 colab: False
-irl: True
+irl: False
 sines: False
 my_pc: False
 new_max_epochs: None
